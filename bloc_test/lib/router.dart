@@ -6,25 +6,29 @@ import 'package:bloctest/notes/repo/firebase_notes_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-class RouteGenerator{
-  static Route<dynamic> generateRoute(RouteSettings settings){
+class RouteGenerator {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
 
-    switch(settings.name){
-      case notesRoute: return MaterialPageRoute(builder: (_) => NotesPage());
-      case noteDetailsRoute: {
-        if(args is String){
-          return MaterialPageRoute(builder: (_) =>
-              BlocProvider<DetailsBloc>(
-                create: (context) => DetailsBloc(notesRepository: FirebaseNotesRepository()),
-                child: NoteDetailsView(noteId: args),
-              ));
+    switch (settings.name) {
+      case notesRoute:
+        return MaterialPageRoute(builder: (_) => NotesPage());
+      case noteDetailsRoute:
+        {
+          if (args is String) {
+            return MaterialPageRoute(
+                builder: (_) => BlocProvider<DetailsBloc>(
+                      create: (context) => DetailsBloc(
+                        notesRepository: FirebaseNotesRepository(),
+                      )..add(args != '' ? GetNoteDetails(args) : NewNoteMode()),
+                      child: NoteDetailsView(),
+                    ));
+          }
+          return _errorRoute();
         }
-        return _errorRoute();
-      }
 
-      default: return _errorRoute();
+      default:
+        return _errorRoute();
     }
   }
 
@@ -40,5 +44,4 @@ class RouteGenerator{
       );
     });
   }
-
 }

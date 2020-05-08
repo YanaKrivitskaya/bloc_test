@@ -20,26 +20,27 @@ class DetailsBloc extends Bloc<DetailsEvent, DetailsState> {
   Stream<DetailsState> mapEventToState(
     DetailsEvent event,
   ) async* {
-    if(event is GetNoteDetails){
+    if (event is GetNoteDetails) {
       yield* _mapGetNoteDetailsToState(event);
-    }else if(event is NewNoteMode){
+    } else if (event is NewNoteMode) {
       yield* _mapNewNoteModeToState(event);
-    }else if(state is EditMode){
+      // you were checking state here instead of event so your event wasn't being processed :)
+    } else if (event is EditMode) {
       yield* _mapEditModeToState(event);
     }
   }
 
-  Stream<DetailsState> _mapGetNoteDetailsToState(GetNoteDetails event) async*{
+  Stream<DetailsState> _mapGetNoteDetailsToState(GetNoteDetails event) async* {
     Note note = await _notesRepository.getNoteById(event.noteId);
 
     yield ViewDetailsState(note);
   }
 
-  Stream<DetailsState> _mapNewNoteModeToState(NewNoteMode event) async*{
+  Stream<DetailsState> _mapNewNoteModeToState(NewNoteMode event) async* {
     yield EditDetailsState(new Note(''), true);
   }
 
-  Stream<DetailsState> _mapEditModeToState(EditMode event) async*{
+  Stream<DetailsState> _mapEditModeToState(EditMode event) async* {
     yield EditDetailsState(event.note, true);
   }
 }
